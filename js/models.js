@@ -90,9 +90,12 @@ class StoryList {
 		const response = await axios({
 			method: 'POST',
 			url: `${BASE_URL}/stories`,
-			data: { token, story: { title, author, url } }
+			data: {
+				token,
+				story: { title, author, url }
+			}
 		});
-
+		console.log(response);
 		const story = new Story(response.data.story);
 		this.stories.unshift(story);
 		user.ownStories.unshift(story);
@@ -217,7 +220,7 @@ class User {
 		let response = await axios({
 			url: `${BASE_URL}/users/${username}/favorites/${story.storyId}`,
 			method: 'POST',
-			data: `{ token: ${token} }`
+			data: { token }
 		});
 	}
 

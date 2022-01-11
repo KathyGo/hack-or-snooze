@@ -90,7 +90,7 @@ async function addNewStoryOnPage(evt) {
 	const url = $('#create-url').val();
 	const author = $('#create-author').val();
 	const username = currentUser.username;
-	const storyData = { title, url, author, username };
+	const storyData = { title, url, author };
 
 	const story = await storyList.addStory(currentUser, storyData);
 

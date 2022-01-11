@@ -24,7 +24,6 @@
       href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
       integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
       crossorigin="anonymous">
-  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/user.css">
   <link rel="stylesheet" href="css/stories.css">
@@ -60,15 +59,15 @@
   <form id="add-story-form" action="#" class="hidden" method="post">
     <div class="add-story-input">
       <label for="story-author">author</label>
-      <input id="story-author" required type="text" placeholder="author name">
+      <input id="story-author" type="text" placeholder="author name" required>
     </div>
     <div class="add-story-input">
       <label for="story-title">title</label>
-      <input id="story-title" required type="text" placeholder="story title">
+      <input id="story-title" type="text" placeholder="story title" required>
     </div>
     <div class="add-story-input">
       <label for="story-url">url</label>
-      <input id="story-url" requried type="url" placeholder="story url">
+      <input id="story-url" type="url" placeholder="story url" required>
     </div>
     <button id="add-story-submit" type="submit">submit</button>
   </form>
