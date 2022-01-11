@@ -22,6 +22,7 @@ async function getAndShowStoriesOnStart() {
 function generateStoryMarkup(story) {
 	//	console.debug('generateStoryMarkup', story);
 	const hostName = story.getHostName();
+	console.log('hostname', hostName);
 	const $starMarkup = generateFavoriteMarkup(story);
 
 	return $(`
@@ -42,9 +43,9 @@ function generateStoryMarkup(story) {
 function generateFavoriteMarkup(story) {
 	if (currentUser) {
 		if (currentUser.favorites.some((s) => s.storyId === story.storyId)) {
-			return '<i class="fas fa-star"></i>';
+			return '<i class="fas fa-star star-icon"></i>';
 		} else {
-			return '<i class="far fa-star"></i>';
+			return '<i class="far fa-star star-icon"></i>';
 		}
 	} else {
 		return '';
@@ -71,24 +72,12 @@ function putStoriesOnPage() {
 
 async function addNewStoryOnPage(evt) {
 	console.debug('addNewStoryOnPage');
-
-	// evt.preventDefault();
-	// const author = $('#story-author').val();
-	// const title = $('#story-title').val();
-	// const url = $('#story-url').val();
-	// const username = currentUser.username;
-	// const newStory = { author, title, url, username };
-
-	// const story = await storyList.addStory(currentUser, author, title, url);
-	// putStoriesOnPage();
-
-	console.debug('submitNewStory');
 	evt.preventDefault();
 
 	// grab all info from form
-	const title = $('#create-title').val();
-	const url = $('#create-url').val();
-	const author = $('#create-author').val();
+	const title = $('#story-title').val();
+	const url = $('#story-url').val();
+	const author = $('#story-author').val();
 	const username = currentUser.username;
 	const storyData = { title, url, author };
 
@@ -98,19 +87,44 @@ async function addNewStoryOnPage(evt) {
 	$allStoriesList.prepend($story);
 
 	// hide the form and reset it
-	$submitForm.slideUp('slow');
-	$submitForm.trigger('reset');
+	$('#add-story-form').slideUp('slow');
+	$('#add-story-form').trigger('reset');
 }
 
 $('#add-story-submit').on('click', addNewStoryOnPage);
 
-// curl -i \
-//      -H "Content-Type: application/json" \
-//      -X POST \
-//      -d '{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikx1Y2t5X1l1ZSIsImlhdCI6MTY0MTY2NjQ3MX0.FzvffswHqJvTNE73n5NA1-4MKWRlLKHD9gKM-YTCn0s", "story": {"author":"Elie Schoppik","title":"Four Tips for Moving Faster as a Developer", "url": "https://www.rithmschool.com/blog/developer-productivity"} }' \
-//       https://hack-or-snooze-v3.herokuapp.com/stories
+/** put list of my own stories on page */
 
-async function addFavoriteStory(evt) {
+function putMyStoriesOnPage() {
+	$allMyStoriesList.empty();
+	if (currentUser.ownStories.length === 0) {
+		$allMyStoriesList.append('<h5>No stories has been added by this user!</h5>');
+	} else {
+		for (let story of currentUser.ownStories) {
+			const $story = generateStoryMarkup(story);
+			$allMyStoriesList.append($story);
+		}
+		$('.star-icon').before('<i class="far fa-trash-alt delete-icon"></i>');
+	}
+
+	$allMyStoriesList.show();
+}
+
+/** put favorites stories on page */
+
+function putFavoriteStoriesOnPage() {
+	$allFavoritesList.empty();
+	for (let story of currentUser.favorites) {
+		const $story = generateStoryMarkup(story);
+		$allFavoritesList.append($story);
+	}
+
+	$allFavoritesList.show();
+}
+
+/** toggle star icon to favorite/unfavorite a story */
+
+async function toggleFavoriteStory(evt) {
 	const storyEle = evt.target.closest('li');
 	const storyId = storyEle.id;
 	const story = storyList.stories.find((s) => s.storyId === storyId);
@@ -124,4 +138,16 @@ async function addFavoriteStory(evt) {
 	}
 }
 
-$allStoriesList.on('click', 'i', addFavoriteStory);
+$('#story-list-container').on('click', '.star-icon', toggleFavoriteStory);
+
+/** delete a story from my stories page */
+
+async function deleteStory(evt) {
+	const storyEle = evt.target.closest('li');
+	const storyId = storyEle.id;
+
+	await storyList.removeStory(currentUser, storyId);
+	putMyStoriesOnPage();
+}
+
+$allMyStoriesList.on('click', '.delete-icon', deleteStory);

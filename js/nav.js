@@ -16,25 +16,38 @@ $body.on('click', '#nav-all', navAllStories);
 
 /** Show add story form on click on "submit" */
 
-function navAddNewStory(evt) {
-	console.debug('navAddNewStory', evt);
-	//hidePageComponents();
+function navSubmitStory(evt) {
+	console.debug('navSubmitStory', evt);
+	hidePageComponents();
+	$allStoriesList.show();
 	$addStoryForm.show();
 }
 
-$('#nav-submit').on('click', navAddNewStory);
+$('#nav-submit').on('click', navSubmitStory);
 
 /** Show users favorites storys on click on "favorites" */
 function navFavoriteStories(evt) {
 	console.debug('navFavoritesStories', evt);
-	$allStoriesList.empty();
+	hidePageComponents();
+	$allFavoritesList.empty();
 	for (let story of currentUser.favorites) {
 		const $story = generateStoryMarkup(story);
-		$allStoriesList.append($story);
+		$allFavoritesList.append($story);
 	}
+
+	$allFavoritesList.show();
 }
 
 $('#nav-favorites').on('click', navFavoriteStories);
+
+/** Show users owned storys on click on "my stories" */
+function navMyStories(evt) {
+	console.debug('navMyStories', evt);
+	hidePageComponents();
+	putMyStoriesOnPage();
+}
+
+$navMyStories.on('click', navMyStories);
 
 /** Show login/signup on click on "login" */
 

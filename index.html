@@ -55,8 +55,8 @@
 
   <!-- loading message (removed by JS after stories loaded) -->
   <div id="stories-loading-msg">Loading&hellip;</div>
-
-  <form id="add-story-form" action="#" class="hidden" method="post">
+  <!-- form for submitting new story -->
+  <form id="add-story-form" action="#" class="hidden">
     <div class="add-story-input">
       <label for="story-author">author</label>
       <input id="story-author" type="text" placeholder="author name" required>
@@ -73,8 +73,14 @@
   </form>
 
   <!-- List of all stories -->
-  <ol id="all-stories-list" class="stories-list"></ol>
-
+  <div id="story-list-container">
+    <ol id="all-stories-list" class="stories-list">
+    </ol>
+    <!-- list of all favorites stories -->
+    <ol id="all-favorites-list" class="stories-list"></ol>
+    <!-- list of all my stories -->
+    <ol id="all-mystories-list" class="stories-list"></ol>
+  </div>
 </section>
 
 <!-- Login and signup forms -->

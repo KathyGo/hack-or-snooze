@@ -24,9 +24,9 @@ class Story {
 
 	getHostName() {
 		// UNIMPLEMENTED: complete this function!
-		// let loc = new URL(url);
-		// return loc.hostname;
-		return 'hostname.com';
+		let loc = new URL(this.url);
+		return loc.hostname;
+		//return 'hostname.com';
 	}
 }
 
@@ -76,16 +76,6 @@ class StoryList {
 	async addStory(user, { author, title, url }) {
 		const token = user.loginToken;
 		console.log(token);
-		// console.log(
-		// 	`{method: "POST",url: ${BASE_URL}/stories,data: { token: ${token}, story: {author: ${author}, title: ${title}, url: ${url}}}`
-		// );
-
-		// const response = await axios({
-		// 	method: 'POST',
-		// 	url: `${BASE_URL}/stories`,
-		// 	data: { token, story: { author, title, url } }
-		// 	//	data: `{ token: ${token}, story: {author: ${author}, title: ${title}, url: ${url}}`
-		// });
 
 		const response = await axios({
 			method: 'POST',
@@ -101,6 +91,19 @@ class StoryList {
 		user.ownStories.unshift(story);
 
 		return story;
+	}
+
+	async removeStory(user, storyId) {
+		const token = user.loginToken;
+		const response = await axios({
+			url: `${BASE_URL}/stories/${storyId}`,
+			method: 'DELETE',
+			data: { token }
+		});
+
+		currentUser.favorites = currentUser.favorites.filter((s) => s.storyId !== storyId);
+		currentUser.ownStories = currentUser.ownStories.filter((s) => s.storyId !== storyId);
+		storyList.stories = storyList.stories.filter((s) => s.storyId !== storyId);
 	}
 }
 
@@ -232,7 +235,7 @@ class User {
 		let response = await axios({
 			url: `${BASE_URL}/users/${username}/favorites/${story.storyId}`,
 			method: 'DELETE',
-			data: `{ token: ${token} }`
+			data: { token }
 		});
 	}
 }
