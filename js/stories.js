@@ -2,6 +2,7 @@
 
 // This is the global list of the stories, an instance of StoryList
 let storyList;
+let storyToUpdate;
 
 /** Get and show stories when site first loads. */
 
@@ -22,7 +23,7 @@ async function getAndShowStoriesOnStart() {
 function generateStoryMarkup(story) {
 	//	console.debug('generateStoryMarkup', story);
 	const hostName = story.getHostName();
-	console.log('hostname', hostName);
+
 	const $starMarkup = generateFavoriteMarkup(story);
 
 	return $(`
@@ -47,8 +48,6 @@ function generateFavoriteMarkup(story) {
 		} else {
 			return '<i class="far fa-star star-icon"></i>';
 		}
-	} else {
-		return '';
 	}
 }
 
@@ -91,7 +90,7 @@ async function addNewStoryOnPage(evt) {
 	$('#add-story-form').trigger('reset');
 }
 
-$('#add-story-submit').on('click', addNewStoryOnPage);
+$('#add-story-form').on('submit', addNewStoryOnPage);
 
 /** put list of my own stories on page */
 
@@ -105,18 +104,55 @@ function putMyStoriesOnPage() {
 			$allMyStoriesList.append($story);
 		}
 		$('.star-icon').before('<i class="far fa-trash-alt delete-icon"></i>');
+		$('.star-icon').after('<a href="#" class="story-edit">edit</a>');
 	}
 
 	$allMyStoriesList.show();
 }
 
+/** Show update story form on click edit link */
+function editMyStory(evt) {
+	const storyEle = evt.target.closest('li');
+	const storyId = storyEle.id;
+	storyToUpdate = storyList.stories.find((s) => s.storyId === storyId);
+
+	$('#update-story-form').show();
+	$('#update-story-author').val(`${storyToUpdate.author}`);
+	$('#update-story-title').val(`${storyToUpdate.title}`);
+	$('#update-story-url').val(`${storyToUpdate.url}`);
+}
+
+$('#all-mystories-list').on('click', '.story-edit', editMyStory);
+
+/** Update story and put own stories on page */
+
+async function updateStory(evt) {
+	evt.preventDefault();
+
+	const title = $('#update-story-title').val();
+	const url = $('#update-story-url').val();
+	const author = $('#update-story-author').val();
+	const storyData = { title, url, author };
+	const storyId = storyToUpdate.storyId;
+	console.log(storyData);
+	await storyList.updateStory(currentUser, storyId, storyData);
+	$('#update-story-form').hide();
+	putMyStoriesOnPage();
+}
+
+$('#update-story-form').on('submit', updateStory);
+
 /** put favorites stories on page */
 
 function putFavoriteStoriesOnPage() {
 	$allFavoritesList.empty();
-	for (let story of currentUser.favorites) {
-		const $story = generateStoryMarkup(story);
-		$allFavoritesList.append($story);
+	if (currentUser.favorites.length === 0) {
+		$allFavoritesList.append('<h5>No favorite story by this user!</h5>');
+	} else {
+		for (let story of currentUser.favorites) {
+			const $story = generateStoryMarkup(story);
+			$allFavoritesList.append($story);
+		}
 	}
 
 	$allFavoritesList.show();

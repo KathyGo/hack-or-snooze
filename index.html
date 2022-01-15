@@ -32,7 +32,6 @@
 </head>
 
 <body>
-
 <!-- top navigation bar -->
 <nav>
   <div class="navbar-brand">
@@ -52,9 +51,6 @@
 
 <!-- area for stories (all stories, user stories, favorites) -->
 <section class="stories-container container">
-
-  <!-- loading message (removed by JS after stories loaded) -->
-  <div id="stories-loading-msg">Loading&hellip;</div>
   <!-- form for submitting new story -->
   <form id="add-story-form" action="#" class="hidden">
     <div class="add-story-input">
@@ -72,10 +68,28 @@
     <button id="add-story-submit" type="submit">submit</button>
   </form>
 
+  <form id="update-story-form" action="#" class="hidden">
+    <div class="update-story-input">
+      <label for="update-story-author">author</label>
+      <input id="update-story-author" type="text" placeholder="author name" required>
+    </div>
+    <div class="update-story-input">
+      <label for="update-story-title">title</label>
+      <input id="update-story-title" type="text" placeholder="story title" required>
+    </div>
+    <div class="update-story-input">
+      <label for="update-story-url">url</label>
+      <input id="update-story-url" type="url" placeholder="story url" required>
+    </div>
+    <button id="update-story-submit" type="submit">update</button>
+  </form>
+
+  <!-- loading message (removed by JS after stories loaded) -->
+  <div id="stories-loading-msg">Loading&hellip;</div>
+
   <!-- List of all stories -->
   <div id="story-list-container">
-    <ol id="all-stories-list" class="stories-list">
-    </ol>
+    <ol id="all-stories-list" class="stories-list"></ol>
     <!-- list of all favorites stories -->
     <ol id="all-favorites-list" class="stories-list"></ol>
     <!-- list of all my stories -->
@@ -85,7 +99,6 @@
 
 <!-- Login and signup forms -->
 <section class="account-forms-container container">
-
   <!-- Login form -->
   <form action="#" id="login-form" class="account-form hidden" method="post">
     <h4>Login</h4>

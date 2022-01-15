@@ -29,13 +29,7 @@ $('#nav-submit').on('click', navSubmitStory);
 function navFavoriteStories(evt) {
 	console.debug('navFavoritesStories', evt);
 	hidePageComponents();
-	$allFavoritesList.empty();
-	for (let story of currentUser.favorites) {
-		const $story = generateStoryMarkup(story);
-		$allFavoritesList.append($story);
-	}
-
-	$allFavoritesList.show();
+	putFavoriteStoriesOnPage();
 }
 
 $('#nav-favorites').on('click', navFavoriteStories);

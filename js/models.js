@@ -85,7 +85,7 @@ class StoryList {
 				story: { title, author, url }
 			}
 		});
-		console.log(response);
+
 		const story = new Story(response.data.story);
 		this.stories.unshift(story);
 		user.ownStories.unshift(story);
@@ -101,9 +101,31 @@ class StoryList {
 			data: { token }
 		});
 
-		currentUser.favorites = currentUser.favorites.filter((s) => s.storyId !== storyId);
-		currentUser.ownStories = currentUser.ownStories.filter((s) => s.storyId !== storyId);
-		storyList.stories = storyList.stories.filter((s) => s.storyId !== storyId);
+		user.favorites = user.favorites.filter((s) => s.storyId !== storyId);
+		user.ownStories = user.ownStories.filter((s) => s.storyId !== storyId);
+		this.stories = this.stories.filter((s) => s.storyId !== storyId);
+	}
+
+	async updateStory(user, storyId, { author, title, url }) {
+		const token = user.loginToken;
+		const response = await axios({
+			url: `${BASE_URL}/stories/${storyId}`,
+			method: 'PATCH',
+			data: { token, story: { author, title, url } }
+		});
+		const story = new Story(response.data.story);
+
+		this.stories = this.stories.map(function(s) {
+			return s.storyId === storyId ? story : s;
+		});
+
+		user.ownStories = user.ownStories.map(function(s) {
+			return s.storyId === storyId ? story : s;
+		});
+
+		user.favorites = user.favorites.map(function(s) {
+			return s.storyId === storyId ? story : s;
+		});
 	}
 }
 
@@ -138,24 +160,29 @@ class User {
    */
 
 	static async signup(username, password, name) {
-		const response = await axios({
-			url: `${BASE_URL}/signup`,
-			method: 'POST',
-			data: { user: { username, password, name } }
-		});
+		try {
+			const response = await axios({
+				url: `${BASE_URL}/signup`,
+				method: 'POST',
+				data: { user: { username, password, name } }
+			});
+			let { user } = response.data;
+			console.log(response.data);
 
-		let { user } = response.data;
-
-		return new User(
-			{
-				username: user.username,
-				name: user.name,
-				createdAt: user.createdAt,
-				favorites: user.favorites,
-				ownStories: user.stories
-			},
-			response.data.token
-		);
+			return new User(
+				{
+					username: user.username,
+					name: user.name,
+					createdAt: user.createdAt,
+					favorites: user.favorites,
+					ownStories: user.stories
+				},
+				response.data.token
+			);
+		} catch (error) {
+			alert('User already exists! Please try with another username.');
+			return;
+		}
 	}
 
 	/** Login in user with API, make User instance & return it.
