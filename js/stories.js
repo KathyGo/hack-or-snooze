@@ -9,7 +9,6 @@ let storyToUpdate;
 async function getAndShowStoriesOnStart() {
 	storyList = await StoryList.getStories();
 	$storiesLoadingMsg.remove();
-
 	putStoriesOnPage();
 }
 
@@ -67,7 +66,9 @@ function putStoriesOnPage() {
 	$allStoriesList.show();
 }
 
-/** Gets story details from inputs and add the new story to story list on page */
+/** Gets story details from inputs and add the new story to story list on page 
+ *  Validate story inputs
+*/
 
 async function addNewStoryOnPage(evt) {
 	console.debug('addNewStoryOnPage');
@@ -79,18 +80,17 @@ async function addNewStoryOnPage(evt) {
 	const author = $('#story-author').val();
 	const username = currentUser.username;
 	const storyData = { title, url, author };
-
 	const story = await storyList.addStory(currentUser, storyData);
 
 	const $story = generateStoryMarkup(story);
 	$allStoriesList.prepend($story);
 
 	// hide the form and reset it
-	$('#add-story-form').slideUp('slow');
-	$('#add-story-form').trigger('reset');
+	$addStoryForm.slideUp('slow');
+	$addStoryForm.trigger('reset');
 }
 
-$('#add-story-form').on('submit', addNewStoryOnPage);
+$addStoryForm.on('submit', addNewStoryOnPage);
 
 /** put list of my own stories on page */
 
@@ -116,13 +116,13 @@ function editMyStory(evt) {
 	const storyId = storyEle.id;
 	storyToUpdate = storyList.stories.find((s) => s.storyId === storyId);
 
-	$('#update-story-form').show();
+	$updateStoryForm.show();
 	$('#update-story-author').val(`${storyToUpdate.author}`);
 	$('#update-story-title').val(`${storyToUpdate.title}`);
 	$('#update-story-url').val(`${storyToUpdate.url}`);
 }
 
-$('#all-mystories-list').on('click', '.story-edit', editMyStory);
+$allMyStoriesList.on('click', '.story-edit', editMyStory);
 
 /** Update story and put own stories on page */
 
@@ -136,11 +136,11 @@ async function updateStory(evt) {
 	const storyId = storyToUpdate.storyId;
 	console.log(storyData);
 	await storyList.updateStory(currentUser, storyId, storyData);
-	$('#update-story-form').hide();
+	$updateStoryForm.hide();
 	putMyStoriesOnPage();
 }
 
-$('#update-story-form').on('submit', updateStory);
+$updateStoryForm.on('submit', updateStory);
 
 /** put favorites stories on page */
 

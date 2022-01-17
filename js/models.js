@@ -180,6 +180,8 @@ class User {
 				response.data.token
 			);
 		} catch (error) {
+			console.log(error);
+			// check error start with 409
 			alert('User already exists! Please try with another username.');
 			return;
 		}
@@ -266,3 +268,5 @@ class User {
 		});
 	}
 }
+
+// Error handling: how to capture API request exception
